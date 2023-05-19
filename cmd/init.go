@@ -17,9 +17,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
+	"fmt"
+	"syscall"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/stormentt/ssh-cert-man/certs"
+	"golang.org/x/term"
 )
 
 // initCmd represents the init command
@@ -28,7 +32,14 @@ var initCmd = &cobra.Command{
 	Short: "Create the SSH certificate authority",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		_, err := certs.GenerateCA()
+		caPath := viper.GetString("ca.path")
+		fmt.Printf("Enter Password: ")
+		pwBytes, err := term.ReadPassword(int(syscall.Stdin))
+		if err != nil {
+			panic(err)
+		}
+
+		err = certs.GenerateCA(caPath, pwBytes)
 		if err != nil {
 			panic(err)
 		}

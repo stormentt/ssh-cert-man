@@ -17,9 +17,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
+	"fmt"
+	"syscall"
+
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/stormentt/ssh-cert-man/certs"
 	"golang.org/x/crypto/ssh"
+	"golang.org/x/term"
 )
 
 var principals []string
@@ -34,10 +39,14 @@ var signCmd = &cobra.Command{
 	Long:  ``,
 	Args:  cobra.MatchAll(cobra.ExactArgs(2)),
 	Run: func(cmd *cobra.Command, args []string) {
-		castore, err := certs.LoadCA()
+		caPath := viper.GetString("ca.path")
+		fmt.Printf("Enter Password: ")
+		pwBytes, err := term.ReadPassword(int(syscall.Stdin))
 		if err != nil {
 			panic(err)
 		}
+
+		castore, err := certs.LoadCA(caPath, pwBytes)
 
 		var realCertType uint32
 		switch certType {

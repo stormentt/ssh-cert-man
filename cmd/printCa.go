@@ -18,10 +18,13 @@ package cmd
 
 import (
 	"fmt"
+	"syscall"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/stormentt/ssh-cert-man/certs"
 	"golang.org/x/crypto/ssh"
+	"golang.org/x/term"
 )
 
 // printCaCmd represents the printCa command
@@ -30,7 +33,14 @@ var printCaCmd = &cobra.Command{
 	Short: "Prints the CA public key",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		castore, err := certs.LoadCA()
+		caPath := viper.GetString("ca.path")
+		fmt.Printf("Enter Password: ")
+		pwBytes, err := term.ReadPassword(int(syscall.Stdin))
+		if err != nil {
+			panic(err)
+		}
+
+		castore, err := certs.LoadCA(caPath, pwBytes)
 		if err != nil {
 			panic(err)
 		}
