@@ -47,6 +47,9 @@ var signCmd = &cobra.Command{
 		}
 
 		castore, err := certs.LoadCA(caPath, pwBytes)
+		if err != nil {
+			panic(err)
+		}
 
 		var realCertType uint32
 		switch certType {

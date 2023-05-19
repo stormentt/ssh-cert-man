@@ -46,6 +46,9 @@ var printCaCmd = &cobra.Command{
 		}
 
 		pubkey, err := ssh.NewPublicKey(castore.Pub)
+		if err != nil {
+			panic(err)
+		}
 
 		marshalled := ssh.MarshalAuthorizedKey(pubkey)
 		fmt.Printf("%s", marshalled)

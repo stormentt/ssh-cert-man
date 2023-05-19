@@ -173,6 +173,10 @@ func (ca CAStore) Sign(outPath string, inPath string, certType uint32, principal
 
 	outBytes := util.MarshalCert(cert)
 	outFile, err := os.OpenFile(outPath, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0600)
+	if err != nil {
+		log.Printf("unable to create cert file: %s", err)
+		return err
+	}
 
 	_, err = outFile.Write(outBytes)
 	if err != nil {
